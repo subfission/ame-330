@@ -1,0 +1,57 @@
+/*
+  Blink by Switch Control
+  Varies blink speed of LED by control switch.
+ */
+ 
+// Pin 13 has the LED on Teensy 3.0
+int led = 13;
+
+// the setup routine runs once when you press reset:
+void setup() {                
+  // initialize the digital pin as an output.
+  pinMode(led, OUTPUT);     
+
+/**
+ * DEBUG PURPOSES
+ */
+   // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+}
+
+// the loop routine runs over and over again forever:
+void loop() {
+    // read the input on analog pin 0:
+  int sensorValue = (analogRead(A0)) / 341;
+
+  // Max value is 1023, but we are splitting that into high/med/low
+  switch( sensorValue ){
+    case 0: // Min value is blink fast
+      blink_led(200);
+      break;
+    case 1: // Med value is blink slower
+      blink_led(800);
+      break;
+    case 2: // Max value is stay on
+    default:
+      light_off(100);
+      break;
+  }
+  
+  // DEBUG PURPOSES
+  Serial.println(sensorValue);
+}
+
+void blink_led(int lightToggleTimer) {
+  light_on(lightToggleTimer);
+  light_off(lightToggleTimer);
+}
+
+void light_on( int lightOnTimer ) {
+  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(lightOnTimer);       // wait for delay
+}
+
+void light_off(int lightOffTimer){
+  digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
+  delay(lightOffTimer);      // wait for delay
+}
