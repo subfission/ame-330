@@ -4,36 +4,46 @@
 * - 1 Photocell that activates lights
 */
 // RED PINS
-const int redPin1 = 3;
-const int redPin2 = 4;
-const int redPin3 = 5;
+const int redPin1 = 5;//3
+const int redPin2 = 10;//4
+const int redPin3 = 21;//5
 
 // GREEN PINS
-const int greenPin1 = 6;
-const int greenPin2 = 9;
-const int greenPin3 = 10;
+const int greenPin1 = 4;//6
+const int greenPin2 = 9;//9
+const int greenPin3 = 22;//10
 
 // BLUE PINS
-const int bluePin1 = 20;
-const int bluePin2 = 21;
-const int bluePin3 = 22;
+const int bluePin1 = 3;//23
+const int bluePin2 = 6;//22
+const int bluePin3 = 23;//21
 
 // PHOTOCELL (works with a0 usually)
 const int photocellPin = 14;     
 
 // LED OFF
 const unsigned int off = 0;
+const unsigned int on = 255;
 unsigned int rgbValues[4];
 
+// My LEDs are common anode, comment this out otherwise
+#define COMMON_ANODE
+
+// Turns on serial printer for colors and photocell
+#define DEBUG
+
 void setup() {
-  applyRGBValues(0,0,0);
+  // Choose the led colors to cycle between.  
+  rgbValues[0] = on;
+  rgbValues[1] = off;
+  rgbValues[2] = off;
+
+  #ifdef DEBUG
+  Serial.begin(9600);
+  #endif
 }
 
 void loop() {
-  // Choose the led colors to cycle between.  
-  rgbValues[0] = 255;
-  rgbValues[1] = off;
-  rgbValues[2] = off;
 
   for (int decrementer = 0; decrementer < 3; decrementer += 1) {
     crossFadeLED(decrementer);
@@ -51,21 +61,43 @@ void crossFadeLED( unsigned int decrementer ){
       if ( isDark() ){
         applyRGBValues(rgbValues[0], rgbValues[1], rgbValues[2]);
       } else {
-        applyRGBValues(off, off, off);
+      // sets common anode to 256, which is off
+        applyRGBValues(-1, -1, -1);
       }
-      delay(5);
     }
 }
 
+/** 
+ *  Check if the room is dark, if it is, turn on the LED
+ */
 boolean isDark()
 {
-  return (analogRead(photocellPin) < 40);
+  int photocell = analogRead(14);
+
+  //int photocell = analogRead(photocellPin);
+  #ifdef DEBUG
+  Serial.print("Photocell:");Serial.println(photocell);  
+  #endif 
+  return (photocell < 40);
 }
 
 /**
  * Set LED Values
  */
-void applyRGBValues(unsigned int red, unsigned int green, unsigned int blue) {
+void applyRGBValues(int red, int green, int blue) {
+
+  #ifdef COMMON_ANODE
+  red = 255 - red;
+  green = 255 - green;
+  blue = 255 - blue;
+  #endif
+
+  #ifdef DEBUG
+  Serial.print("red:");Serial.println(red);
+  Serial.print("green:");Serial.println(green);  
+  Serial.print("blue:");Serial.println(blue);
+  #endif
+  
   analogWrite(redPin1, red);
   analogWrite(redPin2, red);
   analogWrite(redPin3, red);
@@ -77,4 +109,6 @@ void applyRGBValues(unsigned int red, unsigned int green, unsigned int blue) {
   analogWrite(bluePin1, blue);
   analogWrite(bluePin2, blue);
   analogWrite(bluePin3, blue);
+        
+  delay(5);
  }
