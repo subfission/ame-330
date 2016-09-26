@@ -4,19 +4,19 @@
 * - 1 Photocell that activates lights
 */
 // RED PINS
-const int redPin1 = 5;//3
-const int redPin2 = 10;//4
-const int redPin3 = 21;//5
+const int redPin1 = 5;
+const int redPin2 = 10;
+const int redPin3 = 21;
 
 // GREEN PINS
-const int greenPin1 = 4;//6
-const int greenPin2 = 9;//9
-const int greenPin3 = 22;//10
+const int greenPin1 = 4;
+const int greenPin2 = 9;
+const int greenPin3 = 22;
 
 // BLUE PINS
-const int bluePin1 = 3;//23
-const int bluePin2 = 6;//22
-const int bluePin3 = 23;//21
+const int bluePin1 = 3;
+const int bluePin2 = 6;
+const int bluePin3 = 23;
 
 // PHOTOCELL (works with a0 usually)
 const int photocellPin = 14;     
@@ -30,7 +30,7 @@ unsigned int rgbValues[4];
 #define COMMON_ANODE
 
 // Turns on serial printer for colors and photocell
-#define DEBUG
+// #define DEBUG
 
 void setup() {
   // Choose the led colors to cycle between.  
