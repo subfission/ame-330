@@ -1,0 +1,64 @@
+/******************************
+* AME 330: Musical Robot
+* Group Project
+* 
+* Group:
+* Anthony Franqui
+* Sami Nielsen
+* Zach Jetson
+******************************/
+#include <Servo.h> 
+
+Servo servo_1;
+Servo servo_2;
+
+const int servo1_pin = 21; 
+const int servo2_pin = 21;
+
+// Adjust these value as needed
+const int servo1_left = 0;
+const int servo1_right = 180;
+const int servo2_left = 90;
+const int swing_speed_inc = 10;
+
+void setup() 
+{ 
+  servo_1.attach(servo1_pin);
+  servo_2.attach(servo2_pin);
+  
+  // Interrupt Setup here
+}
+
+void loop() 
+{
+  // Interrupt request code for activating
+} 
+
+void swingHamer(Servo servo, int starting = 90, int max = 180 )
+{
+  for(pos = starting, pos < max, pos += swing_speed_inc){
+    servo.write(pos)
+    delay(2)
+  }
+  
+  // Move back to starting position
+  servo.write(starting)
+}
+
+// First Event Triggered
+void stateOne()
+{
+  swingHamer(servo_1, 90, servo1_right);
+}
+
+// Second Event Triggered
+void stateTwo()
+{
+  swingHamer(servo_1, 90, servo1_left);
+}
+
+// Third Event Triggered
+void stateThree()
+{
+  swingHamer(servo_2, 0, servo2_left);
+}
