@@ -14,12 +14,18 @@ Servo servo_2;
 
 const int servo1_pin = 21; 
 const int servo2_pin = 21;
+volatile byte state1 = LOW;
+volatile byte state2 = LOW;
+volatile byte state3 = LOW;
 
 // Adjust these value as needed
 const int servo1_left = 0;
 const int servo1_right = 180;
 const int servo2_left = 90;
 const int swing_speed_inc = 10;
+const int interruptPin1 = 18;
+const int interruptPin2 = 19;
+const int interruptPin3 = 20;
 
 void setup() 
 { 
@@ -27,12 +33,22 @@ void setup()
   servo_2.attach(servo2_pin);
   
   // Interrupt Setup here
+  attachInterrupt(digitalPinToInterrupt(interruptPin1), stateOne, RISING);
+  attachInterrupt(digitalPinToInterrupt(interruptPin2), stateTwo, RISING);
+  attachInterrupt(digitalPinToInterrupt(interruptPin3), stateThree, RISING);
 }
 
 void loop() 
 {
   // Interrupt request code for activating
+  
+  if( state1 !== LOW ){
+    swingHamer(servo_1, 90, servo1_right);
+    state1
+  }
 } 
+
+void 
 
 void swingHamer(Servo servo, int starting = 90, int max = 180 )
 {
@@ -48,7 +64,9 @@ void swingHamer(Servo servo, int starting = 90, int max = 180 )
 // First Event Triggered
 void stateOne()
 {
-  swingHamer(servo_1, 90, servo1_right);
+    state1 = !state1;
+
+  
 }
 
 // Second Event Triggered
