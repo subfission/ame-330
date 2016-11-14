@@ -1,6 +1,6 @@
 /******************************
 * AME 330: Musical Robot
-* Group Project
+* Group Final Project
 * 
 * Group:
 * Anthony Franqui
@@ -11,28 +11,46 @@
 
 Servo servo_1;
 Servo servo_2;
+Servo servo_3;
 
-const int servo1_pin = 21; 
-const int servo2_pin = 21;
+/******************************
+* Adjust these value as needed:
+******************************/
+
+#define servo1_pin 21; 
+#define servo2_pin 22;
+//-- Comment this next line out
+//   if a 3rd servo isn't used.
+#define servo3_pin 23;
 volatile byte state1 = LOW;
 volatile byte state2 = LOW;
 volatile byte state3 = LOW;
 
-// Adjust these value as needed
-const int servo1_left = 0;
 const int servo1_right = 180;
-const int servo2_left = 90;
-const int swing_speed_inc = 10;
+const int servo2_right = 180;
+//-- This isn't used if a 3rd
+//   servo exists.
+const int servo2_left = 0;
+const int servo3_right = 180;
+const int servo_starting_pos = 90;
+
+const int swing_delay = 2;
 const int interruptPin1 = 18;
 const int interruptPin2 = 19;
 const int interruptPin3 = 20;
+
+/******************************
+* DON'T CHANGE ANYTHING BELOW *
+******************************/
 
 void setup() 
 { 
   servo_1.attach(servo1_pin);
   servo_2.attach(servo2_pin);
-  
-  // Interrupt Setup here
+  #if (defined(servo3_pin))
+    servo_3.attach(servo3_pin);
+  #endif
+  //-- Interrupt setup for pins.
   attachInterrupt(digitalPinToInterrupt(interruptPin1), stateOne, RISING);
   attachInterrupt(digitalPinToInterrupt(interruptPin2), stateTwo, RISING);
   attachInterrupt(digitalPinToInterrupt(interruptPin3), stateThree, RISING);
@@ -40,43 +58,52 @@ void setup()
 
 void loop() 
 {
-  // Interrupt request code for activating
-  
+  //-- State logic flow
   if( state1 !== LOW ){
-    swingHamer(servo_1, 90, servo1_right);
-    state1
+    swingHammer(servo_1, servo1_right);
+    state1 = LOW;
   }
+  
+  if( state2 !== LOW ){
+    swingHammer(servo_2, servo2_right);
+    state2 = LOW;
+  }
+  
+  if( state3 !== LOW ){
+    #if (defined(servo3_pin))
+      swingHammer(servo_3, servo3_right);
+    #else
+      swingHammer(servo_2, servo2_left);
+    #endif
+    state3 = LOW;
+  }
+  
+  delay(5);
 } 
 
-void 
-
-void swingHamer(Servo servo, int starting = 90, int max = 180 )
+void swingHammer(Servo servo, int move_to = 180 )
 {
-  for(pos = starting, pos < max, pos += swing_speed_inc){
-    servo.write(pos)
-    delay(2)
-  }
-  
-  // Move back to starting position
-  servo.write(starting)
+  //-- Hit target as quickly as possible.
+  servo.write(move_to);
+  delay(swing_delay);
+  //-- Move back to starting position.
+  servo.write(servo_starting_pos);
 }
 
-// First Event Triggered
+//-- 1st Event Triggered.
 void stateOne()
 {
     state1 = !state1;
-
-  
 }
 
-// Second Event Triggered
+//-- 2nd Event Triggered.
 void stateTwo()
 {
-  swingHamer(servo_1, 90, servo1_left);
+    state2 = !state2;
 }
 
-// Third Event Triggered
+//-- 3rd Event Triggered.
 void stateThree()
 {
-  swingHamer(servo_2, 0, servo2_left);
+    state3 = !state3;
 }
